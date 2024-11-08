@@ -1,6 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:movie_apps/admin/home_admin.dart';
+import 'package:movie_apps/api_service/api.dart';
 import 'package:movie_apps/auth/register_page.dart';
+import 'package:movie_apps/user/home_user.dart';
+import 'package:toastification/toastification.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,8 +15,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController UsernameController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
+  final dio = Dio();
+  bool isLoading = false;
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 16,
             ),
             TextField(
-              controller: UsernameController,
+              controller: usernameController,
               decoration: const InputDecoration(
                 labelText: "Username",
                 border: OutlineInputBorder(),
@@ -54,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 16,
             ),
             TextField(
-              controller: PasswordController,
+              controller: passwordController,
               decoration: const InputDecoration(
                 labelText: "Password",
                 border: OutlineInputBorder(),
@@ -65,18 +72,38 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(
               height: 16,
             ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey,
-                  minimumSize: const Size.fromHeight(50)),
-              child: const Text(
-                "Login",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: () {
+                      if (usernameController.text.isEmpty) {
+                        toastification.show(
+                            context: context,
+                            title: const Text('Username Tidak Boleh Kosong!'),
+                            type: ToastificationType.error,
+                            animationDuration: const Duration(seconds: 3),
+                            style: ToastificationStyle.fillColored);
+                      } else if (passwordController.text.isEmpty) {
+                        toastification.show(
+                            context: context,
+                            title: const Text('Password Tidak Boleh Kosong!'),
+                            type: ToastificationType.error,
+                            animationDuration: const Duration(seconds: 3),
+                            style: ToastificationStyle.fillColored);
+                      } else {
+                        loginResponse();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey,
+                        minimumSize: const Size.fromHeight(50)),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
             const SizedBox(
               height: 16,
             ),
@@ -95,5 +122,62 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ))),
     );
+  }
+
+  void loginResponse() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      await Future.delayed(const Duration(seconds: 2));
+      Response response;
+      response = await dio.post(login, data: {
+        "username": usernameController.text,
+        "password": passwordController.text
+      });
+      if (response.data['status']) {
+        toastification.show(
+          context: context,
+          title: Text(response.data['msg']),
+          type: ToastificationType.success,
+          autoCloseDuration: const Duration(seconds: 3),
+          style: ToastificationStyle.fillColored,
+        );
+        var users = response.data['data'];
+        if (users['role'] == 1) {
+          Navigator.pushNamed(context, HomeAdmin.routName, arguments: users);
+        } else if (users['role'] == 2) {
+          Navigator.pushNamed(context, HomeUser.routName, arguments: users);
+        } else {
+          toastification.show(
+            context: context,
+            title: Text('Akses Dilarang'),
+            type: ToastificationType.error,
+            style: ToastificationStyle.fillColored,
+          );
+        }
+      } else {
+        toastification.show(
+          context: context,
+          title: Text(response.data['msg']),
+          type: ToastificationType.error,
+          autoCloseDuration: const Duration(seconds: 3),
+          style: ToastificationStyle.fillColored,
+        );
+      }
+    } catch (e) {
+      toastification.show(
+        context: context,
+        title: const Text("Terjadi kesalahan pada server"),
+        type: ToastificationType.error,
+        autoCloseDuration: const Duration(seconds: 3),
+        style: ToastificationStyle.fillColored,
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }
