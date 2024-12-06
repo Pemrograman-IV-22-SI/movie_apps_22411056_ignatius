@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_apps/admin/home_admin.dart';
+import 'package:movie_apps/admin/movie/input_movie.dart';
 import 'package:movie_apps/api_service/api.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
@@ -45,7 +46,7 @@ class MoviePageState extends State<MoviePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, MoviePage.routeName);
+                  Navigator.pushNamed(context, InputMovie.routeName);
                 },
                 icon: const Icon(
                   Icons.add,
