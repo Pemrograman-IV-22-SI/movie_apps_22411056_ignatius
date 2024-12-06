@@ -5,6 +5,7 @@ import 'package:movie_apps/admin/genre/update_genre.dart';
 import 'package:movie_apps/admin/home_admin.dart';
 import 'package:movie_apps/admin/movie/input_movie.dart';
 import 'package:movie_apps/admin/movie/movie.dart';
+import 'package:movie_apps/admin/movie/update_movie.dart';
 import 'package:movie_apps/auth/login_page.dart';
 import 'package:movie_apps/auth/register_page.dart';
 import 'package:movie_apps/user/home_user.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         UpdateGenre.routeName: (context) => const UpdateGenre(),
         MoviePage.routeName: (context) => const MoviePage(),
         InputMovie.routeName: (context) => const InputMovie(),
+        UpdateMoviePage.routeName: (context) => const UpdateMoviePage(),
       },
     );
   }

@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:movie_apps/admin/model/genre_model.dart';
 import 'package:movie_apps/admin/model/genre_model.dart';
+import 'package:movie_apps/admin/movie/movie.dart';
 import 'package:movie_apps/api_service/api.dart';
 import 'package:toastification/toastification.dart';
 
@@ -18,6 +22,8 @@ class _InputMovieState extends State<InputMovie> {
   final dio = Dio();
 
   bool isLoading = false;
+
+  int? id_genre;
 
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController pricecontroller = TextEditingController();
@@ -37,6 +43,23 @@ class _InputMovieState extends State<InputMovie> {
       throw Exception('Terjadi Kesalahan: $e');
     }
     return [];
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  Uint8List? _imageBytes;
+
+  Future<void> pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        final Uint8List imageBytes = await image.readAsBytes();
+        setState(() {
+          _imageBytes = imageBytes;
+        });
+      }
+    } catch (e) {
+      throw Exception("Failed to pick image: $e");
+    }
   }
 
   @override
@@ -129,6 +152,7 @@ class _InputMovieState extends State<InputMovie> {
                 onChanged: (GenreModel? data) {
                   setState(() {
                     _selectedGenre = data;
+                    id_genre = data?.id_genre;
                   });
                 },
                 dropdownDecoratorProps: const DropDownDecoratorProps(
@@ -154,7 +178,9 @@ class _InputMovieState extends State<InputMovie> {
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  pickImage();
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     minimumSize: const Size.fromHeight(50)),
@@ -164,12 +190,27 @@ class _InputMovieState extends State<InputMovie> {
                 ),
               ),
               const SizedBox(
+                height: 16,
+              ),
+              _imageBytes != null
+                  ? Image.memory(
+                      _imageBytes!,
+                      width: 300,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    )
+                  : const Text(
+                      'Tidak ada gambar yang dipilih',
+                      style: TextStyle(color: Color.fromARGB(255, 14, 13, 13)),
+                    ),
+              const SizedBox(
                 height: 32,
               ),
               isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: () {
+                        inputMovieResponse();
                         // if (genrecontroller.text.isEmpty && genrecontroller.text == '') {
                         //   toastification.show(
                         //       context: context,
@@ -197,5 +238,44 @@ class _InputMovieState extends State<InputMovie> {
         ),
       )),
     );
+  }
+
+  void inputMovieResponse() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      FormData formData = FormData.fromMap({
+        'image': MultipartFile.fromBytes(_imageBytes!, filename: 'test.jpg'),
+        "title": titlecontroller.text,
+        "price": pricecontroller.text,
+        "genre": id_genre.toString(),
+        "rating": ratingcontroller.text,
+        "description": descriptioncontroller.text
+      });
+      Response response;
+      response = await dio.post(inputMovie, data: formData);
+      if (response.data['status'] == true) {
+        toastification.show(
+            context: context,
+            title: Text('message'),
+            type: ToastificationType.success,
+            autoCloseDuration: const Duration(seconds: 3),
+            style: ToastificationStyle.fillColored);
+        Navigator.pushNamed(context, MoviePage.routeName);
+      }
+    } catch (e) {
+      toastification.show(
+          context: context,
+          title: Text("Terjadi Kesalahan pada server"),
+          type: ToastificationType.error,
+          autoCloseDuration: const Duration(seconds: 3),
+          style: ToastificationStyle.fillColored);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

@@ -1,4 +1,4 @@
-String baseUrl = "http://192.168.165.233:3000";
+String baseUrl = "http://192.168.166.233:3000";
 
 String register = "$baseUrl/user/register";
 String login = "$baseUrl/user/login";
@@ -15,3 +15,4 @@ String editGenre = "$baseUrl/genre/edit/";
 // movie
 String getAllMovie = "$baseUrl/movie/get-all";
 String hapusMovie = "$baseUrl/movie/delete/";
+String inputMovie = "$baseUrl/movie/insert";
