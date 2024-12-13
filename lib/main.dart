@@ -8,6 +8,7 @@ import 'package:movie_apps/admin/movie/movie.dart';
 import 'package:movie_apps/admin/movie/update_movie.dart';
 import 'package:movie_apps/auth/login_page.dart';
 import 'package:movie_apps/auth/register_page.dart';
+import 'package:movie_apps/user/beli_movie.dart';
 import 'package:movie_apps/user/home_user.dart';
 
 void main() {
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         MoviePage.routeName: (context) => const MoviePage(),
         InputMovie.routeName: (context) => const InputMovie(),
         UpdateMoviePage.routeName: (context) => const UpdateMoviePage(),
+        BeliMovie.routeName: (context) => const BeliMovie(),
       },
     );
   }
