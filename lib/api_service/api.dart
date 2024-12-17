@@ -1,4 +1,4 @@
-String baseUrl = "http://192.168.58.233:3000";
+String baseUrl = "http://192.168.143.233:3000";
 
 String register = "$baseUrl/user/register";
 String login = "$baseUrl/user/login";
@@ -16,6 +16,10 @@ String editGenre = "$baseUrl/genre/edit/";
 String getAllMovie = "$baseUrl/movie/get-all";
 String hapusMovie = "$baseUrl/movie/delete/";
 String inputMovie = "$baseUrl/movie/insert";
+String editMovie = "$baseUrl/movie/edit/";
 
 //transaksi
 String insertTransaksi = "$baseUrl/transaction/insert";
+String getTransaksi = "$baseUrl/transaction/get-all";
+String getTransaksiId = "$baseUrl/transaction/get/";
+String confirmTranskasi = "$baseUrl/transaction/confirm-transaction/";

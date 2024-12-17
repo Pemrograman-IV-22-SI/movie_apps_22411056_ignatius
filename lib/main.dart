@@ -6,10 +6,13 @@ import 'package:movie_apps/admin/home_admin.dart';
 import 'package:movie_apps/admin/movie/input_movie.dart';
 import 'package:movie_apps/admin/movie/movie.dart';
 import 'package:movie_apps/admin/movie/update_movie.dart';
+import 'package:movie_apps/admin/transaksi/transaksi.dart';
 import 'package:movie_apps/auth/login_page.dart';
 import 'package:movie_apps/auth/register_page.dart';
 import 'package:movie_apps/user/beli_movie.dart';
 import 'package:movie_apps/user/home_user.dart';
+import 'package:movie_apps/user/transaksi.dart';
+import 'package:toastification/toastification.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +24,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ToastificationWrapper(
+        child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Movie Apps',
       theme: ThemeData(
@@ -41,7 +45,9 @@ class MyApp extends StatelessWidget {
         InputMovie.routeName: (context) => const InputMovie(),
         UpdateMoviePage.routeName: (context) => const UpdateMoviePage(),
         BeliMovie.routeName: (context) => const BeliMovie(),
+        TransaksiUser.routeName: (context) => const TransaksiUser(),
+        TransaksiAdmin.routeName: (context) => const TransaksiAdmin(),
       },
-    );
+    ));
   }
 }

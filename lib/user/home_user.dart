@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_apps/api_service/api.dart';
+import 'package:movie_apps/auth/login_page.dart';
 import 'package:movie_apps/user/beli_movie.dart';
+import 'package:movie_apps/user/transaksi.dart';
 import 'package:toastification/toastification.dart';
 
 class HomeUser extends StatefulWidget {
@@ -39,10 +41,20 @@ class _HomeUserState extends State<HomeUser> {
           actions: [
             IconButton(
                 onPressed: () {
-                  // Navigator.pushNamed(context, InputMovie.routeName);
+                  Navigator.pushNamed(context, TransaksiUser.routeName,
+                      arguments: args);
                 },
                 icon: const Icon(
                   Icons.shopping_bag_outlined,
+                  color: Colors.white,
+                )),
+            const SizedBox(width: 10),
+            IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, LoginPage.routName);
+                },
+                icon: const Icon(
+                  Icons.logout,
                   color: Colors.white,
                 ))
           ],
